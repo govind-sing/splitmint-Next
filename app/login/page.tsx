@@ -1,0 +1,107 @@
+'use client'
+
+import { useActionState } from 'react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { loginAction } from './actions'
+import Link from 'next/link'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const [state, formAction, isPending] = useActionState(loginAction, { error: '' })
+
+  // Redirect if user is already logged in
+  useEffect(() => {
+    async function checkSession() {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) router.push('/dashboard')
+    }
+    checkSession()
+  }, [router])
+
+  return (
+    <main className="min-h-screen bg-zinc-50 flex items-center justify-center px-6 py-12">
+      <div className="w-full max-w-md">
+        {/* Minimal Brand */}
+        <div className="flex justify-center mb-10">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl">
+              S
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">
+              Splitmint
+            </h1>
+          </div>
+        </div>
+
+        {/* Login Card */}
+        <div className="bg-white rounded-3xl shadow-sm border border-zinc-100 p-9">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-semibold text-zinc-900">Welcome back</h2>
+            <p className="text-zinc-600 mt-1 text-sm">Sign in to your account</p>
+          </div>
+
+          {/* Error Message */}
+          {state.error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-2xl">
+              {state.error}
+            </div>
+          )}
+
+          <form action={formAction} className="space-y-6">
+            <div className="space-y-5">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-zinc-700 mb-1.5">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-zinc-400"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-zinc-700 mb-1.5">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  className="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-500 transition-all placeholder:text-zinc-400"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-blue-400 transition-all text-white font-semibold py-3.5 rounded-2xl text-base cursor-pointer disabled:cursor-not-allowed"
+            >
+              {isPending ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+
+          {/* Sign Up Link */}
+          <p className="text-center text-sm text-zinc-600 mt-8">
+            Don't have an account?{' '}
+            <Link 
+              href="/signup" 
+              className="text-blue-600 font-medium hover:text-blue-700 hover:underline transition-colors cursor-pointer"
+            >
+              Create account
+            </Link>
+          </p>
+        </div>
+      </div>
+    </main>
+  )
+}
