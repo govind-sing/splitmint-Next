@@ -2,7 +2,7 @@
 
 > A full-stack debt settlement app — split expenses with friends, track balances, and settle debts with minimal transactions.
 
-**Live Demo:** [splitmint.vercel.app](https://splitmint-next.vercel.app/) &nbsp;|&nbsp; **Backend (Legacy):** Deployed on AWS Lambda
+**Live Demo:** [splitmint.vercel.app](https://splitmint-next.vercel.app/) &nbsp;|&nbsp; 
 
 ---
 
